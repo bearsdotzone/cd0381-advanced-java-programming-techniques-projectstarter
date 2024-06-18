@@ -52,6 +52,7 @@ public final class CrawlResultWriter {
         om.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
         try {
             om.writeValue(writer, result);
+            writer.write(System.lineSeparator());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
