@@ -37,21 +37,23 @@ public final class WebCrawlerMain {
 
         CrawlResult result = crawler.crawl(config.getStartPages());
         CrawlResultWriter resultWriter = new CrawlResultWriter(result);
+        Writer systemOut = new OutputStreamWriter(System.out);
         if (!config.getResultPath()
                    .isEmpty()) {
             Path resultPath = Path.of(config.getResultPath());
             resultWriter.write(resultPath);
         } else {
-            resultWriter.write(new OutputStreamWriter(System.out));
+            resultWriter.write(systemOut);
         }
 
         if (!config.getProfileOutputPath()
-                   .isEmpty()) {
+                   .isBlank()) {
             Path profilePath = Path.of(config.getProfileOutputPath());
             profiler.writeData(profilePath);
         } else {
-            profiler.writeData(new OutputStreamWriter(System.out));
+            profiler.writeData(systemOut);
         }
+        systemOut.close();
     }
 
     public static void main(String[] args) throws Exception {
