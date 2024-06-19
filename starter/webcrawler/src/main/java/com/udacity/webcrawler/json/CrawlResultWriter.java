@@ -1,14 +1,12 @@
 package com.udacity.webcrawler.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Objects;
@@ -49,9 +47,10 @@ public final class CrawlResultWriter {
      */
     public void write(Writer writer) {
         ObjectMapper om = new ObjectMapper();
-        om.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
         try {
-            om.writeValue(writer, result);
+            om.writerWithDefaultPrettyPrinter()
+              .without(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
+              .writeValue(writer, result);
             writer.write(System.lineSeparator());
         } catch (IOException e) {
             throw new RuntimeException(e);
