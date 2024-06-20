@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.Clock;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
@@ -53,7 +52,7 @@ final class ProfilerImpl implements Profiler {
 
     @Override
     public void writeData(Path path) {
-        try (BufferedWriter br = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
+        try (BufferedWriter br = Files.newBufferedWriter(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
             writeData(br);
         } catch (IOException e) {
             throw new RuntimeException(e);

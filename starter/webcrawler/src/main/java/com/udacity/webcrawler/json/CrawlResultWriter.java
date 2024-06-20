@@ -33,7 +33,7 @@ public final class CrawlResultWriter {
      * @param path the file path where the crawl result data should be written.
      */
     public void write(Path path) {
-        try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.WRITE)) {
+        try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
             write(bw);
         } catch (IOException e) {
             throw new RuntimeException(e);
