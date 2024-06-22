@@ -7,13 +7,11 @@ import javax.inject.Inject;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.regex.Pattern;
 
 /**
@@ -62,10 +60,16 @@ final class ParallelWebCrawler implements WebCrawler {
                                                                   .setPageParserFactory(pageParserFactory);
 
         crawlTaskBuilder = crawlTaskBuilder.setCrawlTaskBuilder(crawlTaskBuilder);
-        for (String url : startingUrls) {
-            pool.execute(new CrawlTaskBuilder(crawlTaskBuilder).setUrl(url)
-                                                               .createCrawlTask());
-        }
+        CrawlTaskBuilder finalCrawlTaskBuilder = crawlTaskBuilder;
+
+        pool.submit(() -> {
+            List<CrawlTask> crawlTasks = new ArrayList<>();
+            for (String url : startingUrls) {
+                crawlTasks.add(new CrawlTaskBuilder((finalCrawlTaskBuilder)).setUrl(url)
+                                                                            .createCrawlTask());
+            }
+            ForkJoinTask.invokeAll(crawlTasks.toArray(new CrawlTask[0]));
+        });
 
         pool.awaitQuiescence(timeout.toSecondsPart(), TimeUnit.SECONDS);
 

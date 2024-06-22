@@ -5,6 +5,7 @@ import com.udacity.webcrawler.parser.PageParserFactory;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,10 +65,12 @@ public class CrawlTask extends RecursiveAction {
             counts.compute(e.getKey(), (k, v) -> (v == null) ? e.getValue() : v + e.getValue());
         }
 
+        List<CrawlTask> tasks = new ArrayList<>();
         for (String link : result.getLinks()) {
-            invokeAll(new CrawlTaskBuilder(crawlTaskBuilder).setUrl(link)
+            tasks.add(new CrawlTaskBuilder(crawlTaskBuilder).setUrl(link)
                                                             .setMaxDepth(maxDepth - 1)
                                                             .createCrawlTask());
         }
+        invokeAll(tasks.toArray(new CrawlTask[0]));
     }
 }
